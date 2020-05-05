@@ -41,7 +41,7 @@ class R(object):
         if methods:
             if not isinstance(methods, (list, tuple)):
                 methods = [methods]
-            self.methods = map(lambda m: m.upper(), methods)
+            self.methods = [m.upper() for m in methods]
         else:
             self.methods = None
 

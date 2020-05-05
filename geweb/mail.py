@@ -38,7 +38,7 @@ def mail(to, body, subject='', template=None, html=False, \
                 fp = open(path, 'rb')
                 data = fp.read()
                 fp.close()
-            except IOError, e:
+            except IOError as e:
                 log.error('Attach %s: %s' % (path, e.message))
                 continue
 
@@ -62,7 +62,7 @@ def mail(to, body, subject='', template=None, html=False, \
             msg.attach(part)
 
     elif html:
-        if isinstance(body, unicode):
+        if isinstance(body, str):
             body = body.encode('utf-8')
         msg = MIMEMultipart('alternative')
         msg.attach(MIMEText(body, 'html', 'utf-8'))

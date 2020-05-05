@@ -44,7 +44,7 @@ jinja_env = RelEnvironment(loader=PrefixLoader(_loaders),
                         autoescape=True, cache_size=-1,
                         extensions=['jinja2.ext.loopcontrols'])
 
-for name, fn in filters.iteritems():
+for name, fn in list(filters.items()):
     jinja_env.filters[name] = fn
 
 def render(names, **context):
@@ -54,7 +54,7 @@ def render(names, **context):
     Usage:
     string = render_string('template.html', var1='value 1', var2='value 2')
     """
-    if isinstance(names, (str, unicode)):
+    if isinstance(names, str):
         names = [names]
 
     for name in names:

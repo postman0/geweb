@@ -133,7 +133,7 @@ except AttributeError:
     backend_name = 'geweb.session.file.FileBackend'
 
 module, cls = backend_name.rsplit('.', 1)
-backend_cls = getattr(__import__(module, globals(), locals(), [cls], -1), cls)
+backend_cls = getattr(__import__(module, globals(), locals(), [cls], 0), cls)
 
 class SessionMiddleware(Middleware):
     def process_response(self, response):

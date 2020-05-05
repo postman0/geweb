@@ -51,5 +51,5 @@ class FileBackend(SessionBackend):
     def destroy(self):
         try:
             os.unlink(self.filename)
-        except OSError, e:
+        except OSError as e:
             log.error('unlink %s: %s' % (self.filename, e.strerror))

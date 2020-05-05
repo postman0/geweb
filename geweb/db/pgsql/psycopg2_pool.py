@@ -33,7 +33,7 @@ extensions.set_wait_callback(gevent_wait_callback)
 class DatabaseConnectionPool(object):
 
     def __init__(self, maxsize=100, debug=False):
-        if not isinstance(maxsize, (int, long)):
+        if not isinstance(maxsize, int):
             raise TypeError('Expected integer, got %r' % (maxsize, ))
         self.maxsize = maxsize
         self.pool = Queue()
@@ -121,7 +121,7 @@ class DatabaseConnectionPool(object):
             if self.debug:
                 t = '%.3f' % (time.time() - t1)
                 try:
-                    log.debug(u'execute %s %s' % \
+                    log.debug('execute %s %s' % \
                               (t, cursor.mogrify(*args, **kwargs)))
                 except:
                     pass
@@ -135,7 +135,7 @@ class DatabaseConnectionPool(object):
             if self.debug:
                 t = '%.3f' % (time.time() - t1)
                 try:
-                    log.debug(u'executemany %s %s' % \
+                    log.debug('executemany %s %s' % \
                               (t, cursor.mogrify(*args, **kwargs)))
                 except:
                     pass
@@ -149,7 +149,7 @@ class DatabaseConnectionPool(object):
             if self.debug:
                 t = '%.3f' % (time.time() - t1)
                 try:
-                    log.debug(u'fetchone %s %s' % \
+                    log.debug('fetchone %s %s' % \
                               (t, cursor.mogrify(*args, **kwargs)))
                 except:
                     pass
@@ -164,7 +164,7 @@ class DatabaseConnectionPool(object):
             if self.debug:
                 t = ' %.3f' % (time.time() - t1)
                 try:
-                    log.debug(u'fetchall %s %s' % (t, cursor.mogrify(*args, **kwargs)))
+                    log.debug('fetchall %s %s' % (t, cursor.mogrify(*args, **kwargs)))
                 except:
                     pass
             return cursor.fetchall()

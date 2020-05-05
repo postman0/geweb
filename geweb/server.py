@@ -8,7 +8,7 @@ except AttributeError:
 import gevent
 from gevent import monkey; monkey.patch_all()
 from gevent.pool import Pool
-from gevent.wsgi import WSGIServer
+from gevent.pywsgi import WSGIServer
 from setproctitle import setproctitle
 import inspect
 import traceback
@@ -43,7 +43,7 @@ def handle(environ, start_response):
     try:
         response = resolve(env.request)
 
-    except GewebError, e:
+    except GewebError as e:
         code = e.code
         message = e.message
 
@@ -53,17 +53,17 @@ def handle(environ, start_response):
                                 '/%d.html' % code, '/50x.html',
                                 'geweb/50x.html'],
                                 error=e)
-        except TemplateNotFound, e:
+        except TemplateNotFound as e:
             response = 'No error template found'
 
-    except Exception, e:
+    except Exception as e:
         code = InternalServerError.code
         message = InternalServerError.message
 
         trace = traceback.format_exc()
         tb = inspect.trace()[-1][0]
 
-        if isinstance(trace, str):
+        if isinstance(trace, bytes):
             trace = trace.decode('utf-8')
         log.error("%s: %s" % (code, trace))
 
@@ -72,10 +72,10 @@ def handle(environ, start_response):
                 code=code, message=message,
                 protocol=env.request.protocol, host=env.request.host,
                 uri=env.request.uri, method=env.request.method,
-                params=env.request.args().iteritems(),
+                params=iter(list(env.request.args().items())),
                 headers=env.request.headers(),
-                globals=tb.f_globals.iteritems(),
-                locals=tb.f_locals.iteritems(),
+                globals=iter(list(tb.f_globals.items())),
+                locals=iter(list(tb.f_locals.items())),
                 exception=e, trace=trace)
 
         if settings.debug:
@@ -84,7 +84,7 @@ def handle(environ, start_response):
             response = render('/50x.html', code=code, message=message)
             mail(settings.report_mail, subject=subject, body=body, html=True)
 
-    if isinstance(response, (str, unicode)):
+    if isinstance(response, str):
         response = Response(response)
     elif response is None:
         response = Response('')
@@ -96,7 +96,7 @@ def handle(environ, start_response):
     status, headers = response.render_headers()
     body = response.render()
 
-    if isinstance(body, unicode):
+    if isinstance(body, str):
         body = body.encode('utf-8')
 
     if settings.debug:
@@ -134,7 +134,7 @@ def run_server(host=None, port=None, workers=None, debug=None,
     server = WSGIServer("%s:%s" % (host, port), handle, spawn=pool)
     server.init_socket()
 
-    for i in xrange(settings.workers - 1):
+    for i in range(settings.workers - 1):
         pid = gevent.fork()
         if pid == 0:
             break

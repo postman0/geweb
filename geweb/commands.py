@@ -35,10 +35,10 @@ def init(args):
     except (IOError, OSError):
         die('Cannot create templates directory')
 
-    print ''
-    print 'Project is created. Now you may go to the project directory and run'
-    print '  geweb run'
-    print ''
+    print('')
+    print('Project is created. Now you may go to the project directory and run')
+    print('  geweb run')
+    print('')
 
 def run(args):
     try:

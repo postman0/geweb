@@ -21,13 +21,13 @@ def register_middleware(middleware):
 
     log.debug('Importing %s middleware', middleware)
 
-    if isinstance(middleware, (str, unicode)):
+    if isinstance(middleware, str):
         module, cls = middleware.rsplit('.', 1)
         try:
             module = __import__(module, globals(), locals(), cls, -1)
             cls = getattr(module, cls)
-        except (ImportError, AttributeError), e:
-            print e
+        except (ImportError, AttributeError) as e:
+            print(e)
             raise MiddlewareError('%s: %s' % (middleware, e))
     else:
         cls = middleware
@@ -36,7 +36,7 @@ def register_middleware(middleware):
     _middleware[middleware] = cls()
 
 def unregister_middleware(middleware):
-    if not isinstance(middleware, (str, unicode)):
+    if not isinstance(middleware, str):
         middleware = middleware.__name__
     try:
         del _middleware[middleware]

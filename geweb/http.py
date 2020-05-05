@@ -1,7 +1,7 @@
 import os
-import urlparse
+from urllib import parse as urlparse
 from cgi import FieldStorage
-from Cookie import Cookie
+from http.cookies import SimpleCookie as Cookie
 from datetime import datetime, timedelta
 import time
 from hashlib import md5
@@ -14,7 +14,7 @@ import settings
 class Request(object):
     def __init__(self, environ):
         self._headers = { h[5:].lower().replace('_', '-'): val \
-                          for h, val in environ.iteritems() \
+                          for h, val in list(environ.items()) \
                           if h.startswith('HTTP_') }
 
         self.protocol = self.header('x-forwarded-proto') or \
@@ -103,14 +103,14 @@ class Request(object):
                                 self._args[field.name].append(field.value)
                             except KeyError:
                                 self._args[field.name] = field.value
-                    except IOError, e:
+                    except IOError as e:
                         log.error('Cannot write %s: %s' % \
                                   (self._files[field.name], e.strerror))
 
                 del form
 
         self._cookies = Cookie(self.header('Cookie'))
-        for c, v in self._cookies.iteritems():
+        for c, v in list(self._cookies.items()):
             log.debug('Cookie: %s=%s' % (c, v.value))
 
     def __str__(self):
@@ -139,7 +139,7 @@ class Request(object):
             return None
 
     def headers(self):
-        return self._headers.iteritems()
+        return iter(list(self._headers.items()))
 
     def cookie(self, name, default=None):
         try:
@@ -202,7 +202,7 @@ class Response(object):
 
         headers = []
 
-        for h, val in self._headers.iteritems():
+        for h, val in list(self._headers.items()):
             headers.append((h, val))
 
         for c in self._cookies:

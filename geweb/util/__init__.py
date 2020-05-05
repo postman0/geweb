@@ -3,7 +3,7 @@ import time
 from hashlib import sha1
 from datetime import datetime
 from random import randint
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from geweb.session import Session
 from geweb.exceptions import BadRequest, Forbidden
 from geweb.env import env
@@ -63,9 +63,9 @@ def csrf(fn):
     return _fn
 
 def urlencode(s):
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         s = s.encode('utf-8')
-    return urllib.quote_plus(s)
+    return urllib.parse.quote_plus(s)
 
 def check_https(fn):
     def _fn(*args, **kwargs):
